@@ -15,9 +15,9 @@ Creates a judge for problems similar to USACO or IOI
 6. Create a `submissions` folder to host submissions
 ## If you're hosting the grading server on a different server from the website
 1. You will need to split the problem folder between the grading server and the website
-2. Both the grading server and the website should have the same folder structure (as described in [How to make a problem](#how-to-make-a-problem))
-3. On the grading server, you need `submissions/` and `testcases/`
-4. On the website, you need `submit.js`, `script.js`, and `index.html`
+2. Both the grading server and the website should have a similar folder structure (as described in [How to make a problem](#how-to-make-a-problem))
+3. On the grading server, you need `problems/[problemName]/submissions/` and `problems/[problemName]/testcases/`
+4. On the website, you need `problems/submit.js`, `problems/[problemName]/script.js`, and `problems/[problemName]/index.html`
 5. In `submit.js`, replace server with where you're hosting the grading server
 ## Special Thanks
 - [Lumonike](https://github.com/lumonike), for emailing Brian Dean about what USACO uses for judging. We will use this judge for a project we're working on together

@@ -11,10 +11,15 @@ Creates a judge for problems similar to USACO or IOI
 2. copy and paste the `index.html` and `script.js` files from the `test` folder into that folder
 3. Modify `index.html` to change the problem statement
 4. Modify `script.js` to set the number of testcases you have
-5. For each testcase, name them in this format: [testcaseNumber].in for input, [testcaseNumber].out for output. testcaseNumber is one-indexed
-6. Create a `submissions` folder to host submissions. Inside that submission folder, create 5 folders `0`, `1`, `2`, `3`, and `4` for the 5 isolate boxes
+5. For each testcase, name them in this format: `[testcaseNumber].in` for input, `[testcaseNumber].out` for output. testcaseNumber is one-indexed
+6. Create a `submissions` folder to host submissions
+## If you're hosting the grading server on a different server from the website
+1. You will need to split the problem folder between the grading server and the website
+2. Both the grading server and the website should have the same folder structure (as described in [How to make a problem](#how-to-make-a-problem))
+3. On the grading server, you need `submissions/` and `testcases/`
+4. On the website, you need `submit.js`, `script.js`, and `index.html`
+5. In `submit.js`, replace server with where you're hosting the grading server
 ## Special Thanks
 - [Lumonike](https://github.com/lumonike), for emailing Brian Dean about what USACO uses for judging. We will use this judge for a project we're working on together
 - ChatGPT, for coding the base of the code and giving tips lol
 - DuckDuckGo, for giving me answers from StackOverflow
-- Me, for coding this thing

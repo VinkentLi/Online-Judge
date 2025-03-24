@@ -32,19 +32,21 @@ module.exports.judge = async (code, problem, testcaseCount) => {
         return null;
     }
 
-    const submissionDir = `${problemDir}submissions/${boxID}/`;
+    const submissionDir = `${problemDir}submissions/`;
     const testcaseDir = problemDir + "testcases/";
     const codeFile = `${submissionDir}code.py`;
-
-    fs.writeFileSync(codeFile, code);
-
+    
     if (!initializedIsolate) {
         await initIsolate();
         initializedIsolate = true;
     }
+
+    fs.writeFileSync(codeFile, code);
+    fs.copyFileSync(codeFile, `/var/local/lib/isolate/${boxID}/box/code.py`);
+
     for (let testcase = 1; testcase <= testcaseCount; testcase++) {
         results[boxID][testcase-1] = `Running testcase #${testcase}...`;
-        results[boxID][testcase-1] = await runProgram(boxID, codeFile, submissionDir, testcaseDir, testcase);
+        results[boxID][testcase-1] = await runProgram(boxID, submissionDir, testcaseDir, testcase);
     }
 
     // return it back to the stack
@@ -63,11 +65,11 @@ async function initIsolate() {
     console.log("Initialized Isolate boxes!");
 }
 
-async function runProgram(boxID, codeFile, submissionDir, testcaseDir, testcase) {
+async function runProgram(boxID, submissionDir, testcaseDir, testcase) {
     const timeLimit = 4;
     const timeWall = 2*timeLimit; // used to prevent sleeping
-    const memLimit = 256 * 1024; // 256 MB is the USACO limit. could lower to allow more 
-    const command = `isolate --cg --dir=${submissionDir} --meta=${submissionDir}meta.txt --dir=${testcaseDir} --stdin=${testcaseDir}${testcase}.in --time=${timeLimit} --wall-time=${timeWall} --cg-mem=${memLimit} --box-id=${boxID} --run -- /bin/python3 -O ${codeFile}`;
+    const memLimit = 256 * 1024; // 256 MB is the USACO limit. could lower to allow more control groups
+    const command = `isolate --cg --dir=${submissionDir} --meta=${submissionDir}meta.txt --dir=${testcaseDir} --stdin=${testcaseDir}${testcase}.in --time=${timeLimit} --wall-time=${timeWall} --cg-mem=${memLimit} --box-id=${boxID} --run -- /bin/python3 -O code.py`;
     const expected = fs.readFileSync(testcaseDir+testcase+".out");
     let result = `${testcase}. `;
     const checkOutput = (error, stdout) => {

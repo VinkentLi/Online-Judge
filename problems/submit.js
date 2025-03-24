@@ -1,50 +1,6 @@
-async function checkGradingServer() {
-    try {
-        const response = await fetch(`http://localhost:3000/available`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-        });
-        const data = await response.json();
-        return data.result;
-    } catch (error) {
-        console.error(error.message);
-    }
-}
+// Change this value to the domain or ip of the server
+const server = "http://localhost:3000";
 
-async function getStatus(boxID) {
-    try {
-        const response = await fetch(`http://localhost:3000/subStatus`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ boxID })
-        });
-        const data = await response.json();
-        if (data.error) {
-            throw new Error(data.error);
-        }
-        return data.result;
-    } catch (error) {
-        console.error(error.message);
-    }
-}
-
-async function submit(code, problem, testcaseCount) {
-    try {
-        const response = await fetch(`http://localhost:3000/submit`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code, problem, testcaseCount })
-        });
-        const data = await response.json();
-        console.log(data);
-        if (data.error) {
-            throw new Error(data.error);
-        }
-        return data.result;
-    } catch (error) {
-        throw new Error(error.message);
-    }
-}
 
 let alreadySubmitting = false;
 
@@ -74,6 +30,54 @@ export async function submitCode(document, problem, testcaseCount) {
     }
     displayStatus(outputArea, await completedResults);
     alreadySubmitting = false;
+}
+
+async function checkGradingServer() {
+    try {
+        const response = await fetch(`${server}/available`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+        const data = await response.json();
+        return data.result;
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+async function submit(code, problem, testcaseCount) {
+    try {
+        const response = await fetch(`${server}/submit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code, problem, testcaseCount })
+        });
+        const data = await response.json();
+        console.log(data);
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        return data.result;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+async function getStatus(boxID) {
+    try {
+        const response = await fetch(`${server}/subStatus`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ boxID })
+        });
+        const data = await response.json();
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        return data.result;
+    } catch (error) {
+        console.error(error.message);
+    }
 }
 
 function displayStatus(outputArea, results) {

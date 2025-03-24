@@ -1,6 +1,4 @@
-// Change this value to the domain or ip of the server
-const server = "http://localhost:3000";
-
+import { server } from './getServer.js';
 
 let alreadySubmitting = false;
 

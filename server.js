@@ -8,6 +8,15 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
+app.post("/problems", (req, res) => {
+    const problemsDir = `${__dirname}/problems/`;
+    require('fs').readdir(problemsDir, (err, files) => {
+        if (err) return res.status(500).json({ error: "Error reading directory" });
+        const foldersWithIndex = files.filter(folder => require('fs').existsSync(`${problemsDir}/${folder}/index.html`));
+        res.json(foldersWithIndex);
+    });
+});
+
 app.post("/submit", (req, res) => {
     const { code, problem, testcaseCount } = req.body;
     judge.judge(code, problem, testcaseCount).then(result => res.json({result}));

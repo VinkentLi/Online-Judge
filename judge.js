@@ -29,13 +29,13 @@ module.exports.judge = async (code, problem, testcaseCount) => {
 
     if (!problemExists) {
         console.error("Invalid problem!");
-        return ["Error: Invalid problem!"];
+        return null;
     }
 
     // code must be less than 100,000 bytes
     if (code.length > 100000) {
         console.error("Code file too large!");
-        return ["Error: code file too large!"];
+        return [{status: "RTE", time: "0s", mem:"0 MB"}];
     }
 
     const submissionDir = `${problemDir}submissions/`;
@@ -77,19 +77,20 @@ async function runProgram(boxID, submissionDir, testcaseDir, testcase) {
     const memLimit = 256 * 1024; // 256 MB is the USACO limit. could lower to allow more control groups
     const command = `isolate --cg --dir=${submissionDir} --meta=${submissionDir}meta.txt --dir=${testcaseDir} --stdin=${testcaseDir}${testcase}.in --time=${timeLimit} --wall-time=${timeWall} --cg-mem=${memLimit} --box-id=${boxID} --run -- /bin/python3 -O code.py`;
     const expected = fs.readFileSync(testcaseDir+testcase+".out");
-    let result = `${testcase}. `;
+    let result = {status: "", time: "", mem: ""};
     const checkOutput = (error, stdout) => {
         const metadata = parseMetafile(submissionDir);
         if (metadata.status == "TO") {
-            result += "Time Limit Exceeded";
+            result.status = "TLE";
         } else if (metadata['exitsig'] == 9) { // exit signal 9 is memory limit exceeded i think
-            result += "Memory Limit Exceeded";
+            result.status = "MLE";
         } else if (metadata.status != undefined) {
-            result += "Runtime Error";
+            result.status = "RTE";
         } else {
-            result += stdout == expected ? "Accepted" : "Wrong Answer";
+            result.status = stdout == expected ? "AC" : "WA";
         }
-        result += ` (${metadata.time}s, ${(metadata['max-rss']/1024.0).toFixed(2)} MB)`;
+        result.time = `${metadata.time}s`;
+        result.mem = `${(metadata['max-rss']/1024.0).toFixed(2)} MB`;
     }
     await new Promise((resolve) => { exec(command, checkOutput).on('close', resolve); });
     return result;

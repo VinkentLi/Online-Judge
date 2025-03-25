@@ -9,7 +9,9 @@ export async function submitCode(code, problem, testcaseCount) {
     alreadySubmitting = true;
     console.log("Attempted to submit code!");
     
-    const outputArea = document.getElementById("output");
+    const outputArea = document.getElementById("result");
+    outputArea.className = "outline";
+    scroll(0, 0);
     let boxID = await checkGradingServer();
     while (boxID == -1) {
         outputArea.innerHTML = "Waiting for grading server...";
@@ -23,9 +25,9 @@ export async function submitCode(code, problem, testcaseCount) {
     });
     while (!completed) {
         const curResult = await getStatus(boxID);
-        displayStatus(outputArea, curResult);
+        displayStatus(outputArea, curResult, completed);
     }
-    displayStatus(outputArea, await completedResults);
+    displayStatus(outputArea, await completedResults, completed);
     alreadySubmitting = false;
 }
 
@@ -77,24 +79,87 @@ async function getStatus(boxID) {
     }
 }
 
-function displayStatus(outputArea, results) {
+function displayStatus(outputArea, results, completed) {
     outputArea.innerHTML = "";
-    results.forEach(line => {
-        const p = document.createElement("p");
-        p.style.color = getColor(line);
-        p.textContent = line;
-        outputArea.appendChild(p);
+    const h4 = document.createElement("h4");
+    h4.textContent = completed ? "Submitted! View results below:" : "Processing code...";
+    h4.style.margin = "0 auto";
+    h4.style.textAlign = "center";
+    outputArea.appendChild(h4);
+    const boxContainer = document.createElement('div');
+    boxContainer.className = 'box-container';
+    results.forEach((line, index) => {
+        const box = document.createElement('div');
+        const symbol = document.createElement('h1');
+        const bottom = document.createElement('div');
+        const testcase = document.createElement('span');
+        const info = document.createElement('div');
+        const time = document.createElement('span');
+        const mem = document.createElement('span');
+        box.className = 'box';
+        symbol.style.textAlign = 'center';
+        symbol.style.marginTop = '2px';
+        symbol.style.marginBottom = '2px';
+        bottom.className = 'bottom';
+        testcase.innerText = `${index+1}.`;
+        testcase.className = "bottom-left";
+        testcase.style.fontSize = "25px";
+        info.className = 'bottom-right';
+        time.innerText = line.time;
+        mem.innerText = line.mem;
+        time.style.fontSize = "10px";
+        mem.style.fontSize = "10px";
+        info.appendChild(time);
+        info.appendChild(document.createElement('br'));
+        info.appendChild(mem);
+        bottom.appendChild(testcase);
+        bottom.appendChild(info);
+        setBox(box, symbol, line);
+        box.appendChild(symbol);
+        box.appendChild(bottom);
+        boxContainer.appendChild(box);
     });
+    outputArea.appendChild(boxContainer);
 }
 
-function getColor(line) {
-    if (line.includes("Accepted")) {
-        return "green";
-    } else if (line.includes("Wrong Answer") || 
-               line.includes("Time Limit Exceeded") || 
-               line.includes("Error") ||
-               line.includes("Memory Limit Exceeded")) {
-        return "red";
+function setBox(box, symbol, line) {
+    symbol.innerText = line.status;
+    switch (line.status) {
+    case "AC":
+        box.style.outline = "1px solid green";
+        box.style.color = "green";
+        box.style.backgroundColor = "lightgreen";
+        box.title = "Accepted";
+        break;
+    case "WA":
+        box.style.outline = "1px solid red";
+        box.style.color = "red";
+        box.style.backgroundColor = "pink";
+        box.title = "Wrong Answer";
+        break;
+    case "TLE":
+        box.style.outline = "1px solid red";
+        box.style.color = "red";
+        box.style.backgroundColor = "pink";
+        box.title = "Time Limit Exceeded";
+        break;
+    case "RTE":
+        box.style.outline = "1px solid red";
+        box.style.color = "red";
+        box.style.backgroundColor = "pink";
+        box.title = "Runtime Error";
+        break;
+    case "MLE":
+        box.style.outline = "1px solid red";
+        box.style.color = "red";
+        box.style.backgroundColor = "pink";
+        box.title = "Memory Limit Exceeded";
+        break;
+    default:
+        symbol.innerText = "..."
+        box.style.outline = "1px solid gray";
+        box.style.backgroundColor = "lightgray";
+        box.title = line;
+        break;
     }
-    return "gray";
 }

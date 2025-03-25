@@ -93,7 +93,7 @@ function getColor(line) {
         return "green";
     } else if (line.includes("Wrong Answer") || 
                line.includes("Time Limit Exceeded") || 
-               line.includes("Runtime Error") ||
+               line.includes("Error") ||
                line.includes("Memory Limit Exceeded")) {
         return "red";
     }

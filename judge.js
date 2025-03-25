@@ -19,7 +19,7 @@ module.exports.getStatus = (boxID) => results[boxID];
 module.exports.judge = async (code, problem, testcaseCount) => {
     if (availableBoxes.length == 0) {
         console.error("No available grading server. Frontend should check if grading server is available before submitting!");
-        return null;
+        return ["Error with grading server. Please try submitting again!"];
     }
     const boxID = availableBoxes.pop();
     results[boxID] = new Array(testcaseCount).fill("");
@@ -29,7 +29,13 @@ module.exports.judge = async (code, problem, testcaseCount) => {
 
     if (!problemExists) {
         console.error("Invalid problem!");
-        return null;
+        return ["Error: Invalid problem!"];
+    }
+
+    // code must be less than 100,000 bytes
+    if (code.length > 100000) {
+        console.error("Code file too large!");
+        return ["Error: code file too large!"];
     }
 
     const submissionDir = `${problemDir}submissions/`;

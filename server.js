@@ -6,6 +6,14 @@ const judge = require("./judge.js");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use('/', (req, res, next) => {
+    if (req.url.endsWith('.html')) {
+        return res.status(403).send('Forbidden');
+    }
+    next();
+});
+
 app.use(express.static(__dirname));
 
 app.post("/problems", (req, res) => {

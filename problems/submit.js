@@ -2,13 +2,12 @@ import { server } from './getServer.js';
 
 let alreadySubmitting = false;
 
-export async function submitCode(document, problem, testcaseCount) {
+export async function submitCode(code, problem, testcaseCount) {
     if (alreadySubmitting) {
         return;
     }
     alreadySubmitting = true;
     console.log("Attempted to submit code!");
-    const code = document.getElementById("code").value;
     
     const outputArea = document.getElementById("output");
     let boxID = await checkGradingServer();

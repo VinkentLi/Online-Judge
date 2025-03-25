@@ -2,6 +2,18 @@
 <html>
 <head>
     <title>Online Judge</title>
+    <script src="https://ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+        #container {
+            height: 50vh;
+            width: 65vh;
+        }
+        #editor { 
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <header>
     <a href="../">← Back to Problem List</a>
@@ -11,7 +23,9 @@
     <p>Given an input N (1 ≤ N ≤ 3), print "hi" N times</p>
     <p>Paste code below:</p>
     <script type="module" src="script.js" defer></script>
-    <textarea id="code" style="width: 373px; height: 242px;"></textarea><br>
+    <div id="container">
+        <pre id="editor"></pre>
+    </div><br>
     <button id="runButton">Run</button>
     <pre id="output"></pre>
 </body>

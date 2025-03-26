@@ -1,8 +1,9 @@
 # Online Judge
 Creates a judge for problems similar to USACO or IOI
 ## How to set up
-1. You **need** to run this on Linux, so make sure you have Linux
+NOTE: You **need** to run this on Linux, so make sure you have Linux
 1. Install [isolate](https://github.com/ioi/isolate) (if you have a debian-based linux distro, you should create a debian package to install it)
+   a. Make sure you run isolate.service which can be found in the systemmd folder
 2. Set up node by running `npm install`
 3. Run `sudo node server.js` to initialize the server
 4. The test problem can be found in `localhost:3000/problems/test/`

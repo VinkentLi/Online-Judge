@@ -4,6 +4,7 @@ const { exec } = require("child_process");
 let initializedIsolate = false;
 let inProgress = false;
 const numBoxes = 5;
+const boxPaths = new Array(numBoxes);
 // stack of ids
 const availableBoxes = new Array(numBoxes).fill(0).map((_, index) => index);
 // results for each box
@@ -48,7 +49,7 @@ module.exports.judge = async (code, problem, testcaseCount) => {
     }
 
     fs.writeFileSync(codeFile, code);
-    fs.copyFileSync(codeFile, `/var/local/lib/isolate/${boxID}/box/code.py`);
+    fs.copyFileSync(codeFile, `${boxPaths[boxID]}code.py`);
 
     for (let testcase = 1; testcase <= testcaseCount; testcase++) {
         results[boxID][testcase-1] = `Running testcase #${testcase}...`;
@@ -65,7 +66,9 @@ module.exports.judge = async (code, problem, testcaseCount) => {
 async function initIsolate() {
     // run commands concurrently
     const promises = new Array(numBoxes).fill(0).map((_, boxID) =>
-        new Promise((resolve) => { exec(`isolate --cg --box-id=${boxID} --init`).on('close', resolve); })
+        new Promise((resolve) => { exec(`isolate --cg --box-id=${boxID} --init`, (error, stdout) => { 
+            boxPaths[boxID] = `${stdout.trim()}/box/`;
+        }).on('close', resolve); })
     );
     await Promise.all(promises);
     console.log("Initialized Isolate boxes!");

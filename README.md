@@ -1,4 +1,5 @@
 # Online Judge
+## **OUTDATED: go to [Levis-Judex](https://github.com/lumonike/levis-judex) for an updated fork of this repo**
 Creates a judge for problems similar to USACO or IOI
 ## How to set up
 NOTE: You **need** to run this on Linux, so make sure you have Linux
